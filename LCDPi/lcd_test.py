@@ -1,15 +1,19 @@
-from pitftgpio import PiTFT_GPIO
+import pygame
+import os
+import time
 
-pitft = PiTFT_GPIO()
+os.putenv('SDL_FBDEV', '/dev/fb1')
+
+pygame.init()
+lcd = pygame.display.set_mode((320, 240))
+pygame.mouse.set_visible(False)
+pygame.font.init()
+font = pygame.font.Font('freesansbold.ttf', 30)
+text = font.render('Temperature:', True, (255,255,255))
+textRect = text.get_rect()
 
 while True:
-    if pitft.Button1:
-        print "Button 1 pressed - screen off"
-        pitft.Backlight(False)
-    if pitft.Button2:
-        print "Button 2 pressed - screen on"
-        pitft.Backlight(True)
-    if pitft.Button3:
-        print "Button 3 pressed"
-    if pitft.Button4:
-        print "Button 4 pressed"
+	lcd.fill((255,0,0))
+	lcd.blit(text,textRect)
+	pygame.display.update()
+	time.sleep(1)
