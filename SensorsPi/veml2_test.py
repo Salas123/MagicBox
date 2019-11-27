@@ -2,7 +2,7 @@ import smbus
 import time
 import board
 import neopixel
-
+import RPi.GPIO as GPIO
 bus = smbus.SMBus(1)
 
 addr = 0x10
@@ -88,13 +88,18 @@ def rainbow_cycle(wait):
         pixels.show()
         time.sleep(wait)
 
+buttonPin = 17
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(buttonPin,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+prev_input = 0
 
 while True:
 #The frequency to read the sensor should be set greater than
 # the integration time (and the power saving delay if set).
 # Reading at a faster frequency will not cause an error, but
 # will result in reading the previous data
-	time.sleep(.05) # 40ms
+	time.sleep(1) # 40ms
 
 	word = bus.read_word_data(addr,als)
 # wordIR = bus.read_word_data(addr,white)
@@ -115,13 +120,24 @@ while True:
 
 	valcorr = (6.0135E-13*val**4)-(9.392E-9*val**3)+(8.1488E-5*val**2)+(1.0023E0*val)
 	valcorr = round(valcorr) #Round corrected value for presentation
+	button_input = GPIO.input(17)
+	if button_input == False:
+		if prev_input == 1:
+			prev_input = 0
+		else:
+			prev_input = 1
 
-	if valcorr < 100:
-		rainbow_cycle(0.001)
+		time.sleep(0.5)
+
+	if prev_input == 1:
+
+		if valcorr < 100:
+			rainbow_cycle(0.001)
+
+		else:
+			pixels.fill((0,0,0))
+			pixels.show()
 
 	else:
 		pixels.fill((0,0,0))
 		pixels.show()
-		time.sleep(0.001)
-
-	print ("Lux Measure: " +str(valcorr))
