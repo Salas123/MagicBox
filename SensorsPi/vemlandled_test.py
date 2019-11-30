@@ -58,6 +58,20 @@ ORDER = neopixel.GRB
 pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.2, auto_write=False,
                            pixel_order=ORDER)
 
+
+def Strobe(red,green,blue, StrobeCount,FlashDelay, EndPause):
+  for i in range(StrobeCount):
+    pixels.fill((red,green,blue))
+    pixels.show()
+    time.sleep(FlashDelay)
+    pixels.fill((0,0,0))
+    pixels.show()
+    time.sleep(FlashDelay)
+
+    time.sleep(EndPause)
+
+
+
 def wheel(pos):
     # Input a value 0 to 255 to get a color value.
     # The colours are a transition r - g - b - back to r.
@@ -132,8 +146,9 @@ while True:
 	if prev_input == 1:
 
 		if valcorr < 100:
-			rainbow_cycle(0.001)
-
+			Strobe(255,255,255,5,0.05,0.001)
+			Strobe(255,0,255,5,0.05,0.001)
+			Strobe(255,192,203,5,0.05,0.001)
 		else:
 			pixels.fill((0,0,0))
 			pixels.show()
